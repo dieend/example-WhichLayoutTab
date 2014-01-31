@@ -1,4 +1,4 @@
-package com.example.whichlayouttab;
+package com.dieend.example.whichlayouttab;
 
 public class Splitter {
 	public static int whichVersioN() {

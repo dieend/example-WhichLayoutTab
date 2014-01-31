@@ -1,6 +1,8 @@
-package com.example.whichlayouttab;
+package com.dieend.example.whichlayouttab;
 
 import java.util.Locale;
+
+import com.example.whichlayouttab.R;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -97,14 +99,7 @@ public class MainActivity extends FragmentActivity implements
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
-		switch(Splitter.whichVersioN()) {
-			case 0:
-				layoutA();
-				break;
-			case 1:
-				layoutB();
-				break;
-		}
+		layoutA();
 	}
 
 	@Override
