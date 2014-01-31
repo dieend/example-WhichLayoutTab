@@ -38,6 +38,50 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 
+	private void layoutA() {
+		final ActionBar actionBar = getActionBar();
+		// Set up the ViewPager with the sections adapter.
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		// For each of the sections in the app, add a tab to the action bar.
+		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+			// Create a tab with text corresponding to the page title defined by
+			// the adapter. Also specify this Activity object, which implements
+			// the TabListener interface, as the callback (listener) for when
+			// this tab is selected.
+			actionBar.addTab(actionBar.newTab()
+					.setText(mSectionsPagerAdapter.getPageTitle(i))
+					.setTabListener(this));
+		}
+		// When swiping between different sections, select the corresponding
+		// tab. We can also use ActionBar.Tab#select() to do this if we have
+		// a reference to the Tab.
+		mViewPager
+				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+					@Override
+					public void onPageSelected(int position) {
+						actionBar.setSelectedNavigationItem(position);
+					}
+				});
+		
+	}
+	private void layoutB() {
+		PagerTitleStrip strip = new PagerTitleStrip(this);
+		ViewPager.LayoutParams params = new ViewPager.LayoutParams();
+		params.width = ViewPager.LayoutParams.MATCH_PARENT;
+		params.height = ViewPager.LayoutParams.WRAP_CONTENT;
+		params.gravity = Gravity.TOP;
+		strip.setTextColor(Color.parseColor("#ffffff"));;
+		strip.setBackgroundColor(Color.parseColor("#33b5e5"));
+		float scale = getResources().getDisplayMetrics().density;
+		int dpAsPixels = (int) (4*scale + 0.5f);
+		strip.setPadding(0, dpAsPixels, 0, dpAsPixels);
+		mViewPager.addView(strip, 0, params);
+		mSectionsPagerAdapter = new SectionsPagerAdapter(
+				getSupportFragmentManager());
+		// Set up the ViewPager with the sections adapter.
+
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,48 +99,10 @@ public class MainActivity extends FragmentActivity implements
 
 		switch(Splitter.whichVersioN()) {
 			case 0:
-				final ActionBar actionBar = getActionBar();
-				// Set up the ViewPager with the sections adapter.
-				actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-				// For each of the sections in the app, add a tab to the action bar.
-				for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-					// Create a tab with text corresponding to the page title defined by
-					// the adapter. Also specify this Activity object, which implements
-					// the TabListener interface, as the callback (listener) for when
-					// this tab is selected.
-					actionBar.addTab(actionBar.newTab()
-							.setText(mSectionsPagerAdapter.getPageTitle(i))
-							.setTabListener(this));
-				}
-				// When swiping between different sections, select the corresponding
-				// tab. We can also use ActionBar.Tab#select() to do this if we have
-				// a reference to the Tab.
-				mViewPager
-						.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-							@Override
-							public void onPageSelected(int position) {
-								actionBar.setSelectedNavigationItem(position);
-							}
-						});
+				layoutA();
 				break;
 			case 1:
-				PagerTitleStrip strip = new PagerTitleStrip(this);
-				ViewPager.LayoutParams params = new ViewPager.LayoutParams();
-				params.width = ViewPager.LayoutParams.MATCH_PARENT;
-				params.height = ViewPager.LayoutParams.WRAP_CONTENT;
-				params.gravity = Gravity.TOP;
-				strip.setTextColor(Color.parseColor("#ffffff"));;
-				strip.setBackgroundColor(Color.parseColor("#33b5e5"));
-				float scale = getResources().getDisplayMetrics().density;
-				int dpAsPixels = (int) (4*scale + 0.5f);
-				strip.setPadding(0, dpAsPixels, 0, dpAsPixels);
-				mViewPager.addView(strip, 0, params);
-				mSectionsPagerAdapter = new SectionsPagerAdapter(
-						getSupportFragmentManager());
-				// Set up the ViewPager with the sections adapter.
-
-				mViewPager.setAdapter(mSectionsPagerAdapter);
-
+				layoutB();
 				break;
 		}
 	}
