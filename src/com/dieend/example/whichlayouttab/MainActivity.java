@@ -2,8 +2,6 @@ package com.dieend.example.whichlayouttab;
 
 import java.util.Locale;
 
-import com.example.whichlayouttab.R;
-
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
@@ -21,6 +19,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.dieend.adin.annotation.ADINSimpleAlternateWith;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -40,6 +40,7 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 
+	@ADINSimpleAlternateWith(method="layoutB")
 	private void layoutA() {
 		final ActionBar actionBar = getActionBar();
 		// Set up the ViewPager with the sections adapter.
@@ -66,13 +67,20 @@ public class MainActivity extends FragmentActivity implements
 				});
 		
 	}
+	private int alternateTextColor() {
+		return Color.RED;
+	}
+	@ADINSimpleAlternateWith(method="alternateTextColor")
+	private int getTextColor() {
+		return Color.parseColor("#ffffff");
+	}
 	private void layoutB() {
 		PagerTitleStrip strip = new PagerTitleStrip(this);
 		ViewPager.LayoutParams params = new ViewPager.LayoutParams();
 		params.width = ViewPager.LayoutParams.MATCH_PARENT;
 		params.height = ViewPager.LayoutParams.WRAP_CONTENT;
 		params.gravity = Gravity.TOP;
-		strip.setTextColor(Color.parseColor("#ffffff"));;
+		strip.setTextColor(getTextColor());
 		strip.setBackgroundColor(Color.parseColor("#33b5e5"));
 		float scale = getResources().getDisplayMetrics().density;
 		int dpAsPixels = (int) (4*scale + 0.5f);
