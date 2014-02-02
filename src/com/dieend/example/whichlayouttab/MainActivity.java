@@ -1,6 +1,8 @@
 package com.dieend.example.whichlayouttab;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -12,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -63,11 +66,15 @@ public class MainActivity extends FragmentActivity implements
 				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 					@Override
 					public void onPageSelected(int position) {
+						Map<String, String> data = new HashMap<String, String>();
+						data.put("page", "" +position);
+						ADINAgent.logEvent("view_page");
 						actionBar.setSelectedNavigationItem(position);
 					}
 				});
 		
 	}
+	
 	private int alternateTextColor() {
 		return Color.RED;
 	}
@@ -87,17 +94,13 @@ public class MainActivity extends FragmentActivity implements
 		int dpAsPixels = (int) (4*scale + 0.5f);
 		strip.setPadding(0, dpAsPixels, 0, dpAsPixels);
 		mViewPager.addView(strip, 0, params);
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
-		// Set up the ViewPager with the sections adapter.
-
-		mViewPager.setAdapter(mSectionsPagerAdapter);
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ADINAgent.onCreate(this);
+		ADINAgent.logEvent("session", new HashMap<String, String>(), true);
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
@@ -113,6 +116,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onPause() {
 		super.onPause();
+		ADINAgent.endTimedEvent("session");
 	}
 
 	@Override
