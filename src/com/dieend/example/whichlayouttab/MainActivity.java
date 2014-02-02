@@ -66,9 +66,10 @@ public class MainActivity extends FragmentActivity implements
 				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 					@Override
 					public void onPageSelected(int position) {
-						Map<String, String> data = new HashMap<String, String>();
+						Map<String, String> data = new HashMap<String, String>();	
 						data.put("page", "" +position);
-						ADINAgent.logEvent("view_page");
+						Log.d("ADIN", "view_page");
+						ADINAgent.logEvent("view_page", data);
 						actionBar.setSelectedNavigationItem(position);
 					}
 				});
@@ -94,6 +95,16 @@ public class MainActivity extends FragmentActivity implements
 		int dpAsPixels = (int) (4*scale + 0.5f);
 		strip.setPadding(0, dpAsPixels, 0, dpAsPixels);
 		mViewPager.addView(strip, 0, params);
+		mViewPager
+		.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				Map<String, String> data = new HashMap<String, String>();
+				data.put("page", "" +position);
+				Log.d("ADIN", "view_page");
+				ADINAgent.logEvent("view_page", data);
+			}
+		});
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -210,7 +221,6 @@ public class MainActivity extends FragmentActivity implements
 					.findViewById(R.id.section_label);
 			dummyTextView.setText(Integer.toString(getArguments().getInt(
 					ARG_SECTION_NUMBER)));
-			Log.d("ADIN",""+container.getChildCount());
 			return rootView;
 		}
 	}
