@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dieend.adin.annotation.ADINSimpleAlternateWith;
+import com.dieend.adin.android.library.ADINAgent;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -96,7 +97,7 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		ADINAgent.onCreate(this);
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
@@ -108,6 +109,10 @@ public class MainActivity extends FragmentActivity implements
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
 		layoutA();
+	}
+	@Override
+	protected void onPause() {
+		super.onPause();
 	}
 
 	@Override
