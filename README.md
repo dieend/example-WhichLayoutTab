@@ -1,6 +1,8 @@
 #Which Layout
 Simple project to give a look at https://github.com/dieend/ADIN-Android-Split-Testing-Library
 
+This project implements custom IADINSelector which give random value for splittest. You can run the application in your for several time to see it did changed.
+
 Copy-Paste:
 ```
 build.xml
