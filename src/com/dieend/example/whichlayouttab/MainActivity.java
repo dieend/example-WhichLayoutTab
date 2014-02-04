@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.dieend.adin.annotation.ADINRecordBeforeWith;
 import com.dieend.adin.annotation.ADINSimpleAlternateWith;
 import com.dieend.adin.android.library.ADINAgent;
 
@@ -44,7 +45,7 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 
-	@ADINSimpleAlternateWith(method="layoutB")
+	@ADINSimpleAlternateWith(method="layoutB", experimentName="testExperiment")
 	private void layoutA() {
 		final ActionBar actionBar = getActionBar();
 		// Set up the ViewPager with the sections adapter.
@@ -65,24 +66,21 @@ public class MainActivity extends FragmentActivity implements
 		mViewPager
 				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 					@Override
+					@ADINRecordBeforeWith(method="recordPage")
 					public void onPageSelected(int position) {
-						Map<String, String> data = new HashMap<String, String>();	
-						data.put("page", "" +position);
-						Log.d("ADIN", "view_page");
-						ADINAgent.logEvent("view_page", data);
 						actionBar.setSelectedNavigationItem(position);
 					}
 				});
 		
 	}
 	
-	private int alternateTextColor() {
-		return Color.RED;
+	private static void recordPage(int position) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("page", "" +position);
+		Log.d("ADIN", "view_page");
+		ADINAgent.logEvent("view_page", data);
 	}
-	@ADINSimpleAlternateWith(method="alternateTextColor")
-	private int getTextColor() {
-		return Color.parseColor("#ffffff");
-	}
+	
 	private void layoutB() {
 		PagerTitleStrip strip = new PagerTitleStrip(this);
 		ViewPager.LayoutParams params = new ViewPager.LayoutParams();
@@ -95,22 +93,28 @@ public class MainActivity extends FragmentActivity implements
 		int dpAsPixels = (int) (4*scale + 0.5f);
 		strip.setPadding(0, dpAsPixels, 0, dpAsPixels);
 		mViewPager.addView(strip, 0, params);
+		
 		mViewPager
 		.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
+			@ADINRecordBeforeWith(method="recordPage")
 			public void onPageSelected(int position) {
-				Map<String, String> data = new HashMap<String, String>();
-				data.put("page", "" +position);
-				Log.d("ADIN", "view_page");
-				ADINAgent.logEvent("view_page", data);
+				
 			}
 		});
+	}
+	private int alternateTextColor() {
+		return Color.RED;
+	}
+	@ADINSimpleAlternateWith(method="alternateTextColor", experimentName="testExperiment")
+	private int getTextColor() {
+		return Color.parseColor("#ffffff");
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		ADINAgent.onCreate(this);
+		ADINAgent.onCreate(this, new Splitter());
 		ADINAgent.logEvent("session", new HashMap<String, String>(), true);
 
 		// Create the adapter that will return a fragment for each of the three
