@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,9 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dieend.adin.annotation.ADINRecordBeforeWith;
-import com.dieend.adin.annotation.ADINSimpleAlternateWith;
 import com.dieend.adin.android.library.ADINAgent;
+import com.dieend.adin.annotation.ADINParameterSplitTest;
+import com.dieend.adin.annotation.ADINRecordBeforeWith;
+import com.dieend.adin.annotation.ADINSimpleSplitTest;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -45,7 +45,7 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 
-	@ADINSimpleAlternateWith(method="layoutB", experimentName="testExperiment")
+	@ADINSimpleSplitTest(method="layoutB", experimentName="testExperiment")
 	private void layoutA() {
 		final ActionBar actionBar = getActionBar();
 		// Set up the ViewPager with the sections adapter.
@@ -88,7 +88,7 @@ public class MainActivity extends FragmentActivity implements
 		params.height = ViewPager.LayoutParams.WRAP_CONTENT;
 		params.gravity = Gravity.TOP;
 		strip.setTextColor(getTextColor());
-		strip.setBackgroundColor(Color.parseColor("#33b5e5"));
+		strip.setBackgroundColor(getBgColor("#33b5e5"));
 		float scale = getResources().getDisplayMetrics().density;
 		int dpAsPixels = (int) (4*scale + 0.5f);
 		strip.setPadding(0, dpAsPixels, 0, dpAsPixels);
@@ -106,15 +106,21 @@ public class MainActivity extends FragmentActivity implements
 	private int alternateTextColor() {
 		return Color.RED;
 	}
-	@ADINSimpleAlternateWith(method="alternateTextColor", experimentName="testExperiment")
+	@ADINSimpleSplitTest(method="alternateTextColor", experimentName="testExperiment")
 	private int getTextColor() {
 		return Color.parseColor("#ffffff");
+	}
+	@ADINParameterSplitTest(experimentName="testExperiment")
+	private int getBgColor(String color) {
+		return Color.parseColor(color);
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ADINAgent.onCreate(this, new Splitter());
+		
+
 		ADINAgent.logEvent("session", new HashMap<String, String>(), true);
 
 		// Create the adapter that will return a fragment for each of the three
