@@ -1,8 +1,6 @@
 package com.dieend.example.whichlayouttab;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -14,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,12 +20,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dieend.adin.android.library.ADINAgent;
-import com.dieend.adin.annotation.ADINParameterSplitTest;
-import com.dieend.adin.annotation.ADINRecordBeforeWith;
-import com.dieend.adin.annotation.ADINSimpleSplitTest;
+import com.dieend.adin.annotation.ParameterSplitTest;
+import com.dieend.adin.annotation.RecordAfterWith;
+import com.dieend.adin.annotation.RecordBeforeWith;
+import com.dieend.adin.annotation.SimpleSplitTest;
+import com.dieend.adin.annotation.Type;
 
 public class MainActivity extends FragmentActivity implements
-		ActionBar.TabListener {
+		ActionBar.TabListener, SplitWaiter {
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -45,7 +44,7 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 
-	@ADINSimpleSplitTest(method="layoutB", experimentName="testExperiment")
+	@SimpleSplitTest(method="layoutB", experimentName="testExperiment")
 	private void layoutA() {
 		final ActionBar actionBar = getActionBar();
 		// Set up the ViewPager with the sections adapter.
@@ -66,7 +65,6 @@ public class MainActivity extends FragmentActivity implements
 		mViewPager
 				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 					@Override
-					@ADINRecordBeforeWith(method="recordPage")
 					public void onPageSelected(int position) {
 						actionBar.setSelectedNavigationItem(position);
 					}
@@ -74,12 +72,6 @@ public class MainActivity extends FragmentActivity implements
 		
 	}
 	
-	private static void recordPage(int position) {
-		Map<String, String> data = new HashMap<String, String>();
-		data.put("page", "" +position);
-		Log.d("ADIN", "view_page");
-		ADINAgent.logEvent("view_page", data);
-	}
 	
 	private void layoutB() {
 		PagerTitleStrip strip = new PagerTitleStrip(this);
@@ -97,7 +89,7 @@ public class MainActivity extends FragmentActivity implements
 		mViewPager
 		.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
-			@ADINRecordBeforeWith(method="recordPage")
+			@RecordBeforeWith(eventName="select-page")
 			public void onPageSelected(int position) {
 				
 			}
@@ -106,22 +98,30 @@ public class MainActivity extends FragmentActivity implements
 	private int alternateTextColor() {
 		return Color.RED;
 	}
-	@ADINSimpleSplitTest(method="alternateTextColor", experimentName="testExperiment")
+	@SimpleSplitTest(method="alternateTextColor", experimentName="testExperiment")
 	private int getTextColor() {
 		return Color.parseColor("#ffffff");
 	}
-	@ADINParameterSplitTest(experimentName="testExperiment")
+	@ParameterSplitTest(experimentName="testExperiment")
 	private int getBgColor(String color) {
 		return Color.parseColor(color);
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		ADINAgent.onCreate(this, new Splitter());
 		
-
-		ADINAgent.logEvent("session", new HashMap<String, String>(), true);
+		ADINAgent.onCreate(this, new Splitter(this, "http://google.com", this));
+		
+		setLoader();
+		
+	}
+	private void setLoader() {
+		setContentView(R.layout.activity_load);
+		progress = (TextView)findViewById(R.id.progressText);
+	}
+	@RecordBeforeWith(eventName="session", type=Type.TIMED)
+	private void setLayout() {
+		setContentView(R.layout.activity_main);
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
@@ -134,10 +134,11 @@ public class MainActivity extends FragmentActivity implements
 
 		layoutA();
 	}
+	
 	@Override
+	@RecordBeforeWith(eventName="session", type=Type.END_TIMED)
 	protected void onPause() {
 		super.onPause();
-		ADINAgent.endTimedEvent("session");
 	}
 
 	@Override
@@ -188,6 +189,7 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 		@Override
+		@RecordAfterWith(eventName="number-of-page")
 		public int getCount() {
 			// Show 3 total pages.
 			return 3;
@@ -235,4 +237,14 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
+	@Override
+	public void finished() {
+		setLayout();
+	}
+
+	@Override
+	public void configProgressed(Long percentage) {
+		progress.setText("" + percentage + "%");
+	}
+	private TextView progress;
 }

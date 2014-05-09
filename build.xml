@@ -35,7 +35,7 @@
     </taskdef>
     
     <target name="-aspectWeaving">
-        <iajc destdir="${out.classes.absolute.dir}" proceedOnError="false">
+        <iajc destdir="${out.classes.absolute.dir}" proceedOnError="false" source="1.6">
           <sourceroots>
             <pathelement path="adin.gen"/>
           </sourceroots>
