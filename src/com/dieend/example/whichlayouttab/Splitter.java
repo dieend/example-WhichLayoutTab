@@ -7,11 +7,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.dieend.adin.android.library.IADINSelector;
+import com.dieend.adin.hermes.splitter.SplitterInterface;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 
-public class Splitter implements IADINSelector{
+public class Splitter implements SplitterInterface{
 	Context context;
 	JsonClientIdentifier client;
 	boolean ready = false;
@@ -33,7 +33,10 @@ public class Splitter implements IADINSelector{
 	static Random rand = new Random();
 	@Override
 	public boolean isInExperiment(String arg0) {
-		return rand.nextInt(2)%2 == 0; 
+		return true; 
+	}
+	public int bucket(String arg0){
+		return 1;
 	}
 	@Override
 	public boolean isReady() {

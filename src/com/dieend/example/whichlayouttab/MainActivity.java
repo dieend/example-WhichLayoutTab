@@ -19,12 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dieend.adin.android.library.ADINAgent;
-import com.dieend.adin.annotation.ParameterSplitTest;
-import com.dieend.adin.annotation.RecordAfterWith;
-import com.dieend.adin.annotation.RecordBeforeWith;
-import com.dieend.adin.annotation.SimpleSplitTest;
-import com.dieend.adin.annotation.Type;
+import com.dieend.adin.hermes.ADIN;
+import com.dieend.adin.hermes.annotations.ParameterSplitTest;
+import com.dieend.adin.hermes.annotations.RecordAfterWith;
+import com.dieend.adin.hermes.annotations.RecordBeforeWith;
+import com.dieend.adin.hermes.annotations.SimpleSplitTest;
+import com.dieend.adin.hermes.annotations.Type;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, SplitWaiter {
@@ -110,7 +110,7 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		ADINAgent.onCreate(this, new Splitter(this, "http://google.com", this));
+		ADIN.onCreate(this, new Splitter(this, "http://google.com", this));
 		
 		setLoader();
 		
